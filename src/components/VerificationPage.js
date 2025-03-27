@@ -1,35 +1,13 @@
 // VerificationPage.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Logo from './Logo';
 import './VerificationPage.css';
 
 function VerificationPage() {
   const [code, setCode] = useState('');
   const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Handle auto-test mode
-  useEffect(() => {
-    console.log('URL params:', location.search); // Add this for debugging
-    const params = new URLSearchParams(location.search);
-    const autoTest = params.get('autoTest');
-    
-    console.log('AutoTest param:', autoTest); // Add this for debugging
-    
-    if (autoTest === 'true') {
-      console.log('Auto test mode detected - filling code');
-      setCode('111111');
-      
-      // Submit after a short delay
-      const timer = setTimeout(() => {
-        console.log('Auto-submitting form');
-        navigate('/success');
-      }, 1500);
-      
-      return () => clearTimeout(timer);
-    }
-  }, [location, navigate]);
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
