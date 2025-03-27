@@ -11,16 +11,19 @@ function VerificationPage() {
   
   // Handle auto-test mode
   useEffect(() => {
+    console.log('URL params:', location.search); // Add this for debugging
     const params = new URLSearchParams(location.search);
     const autoTest = params.get('autoTest');
     
+    console.log('AutoTest param:', autoTest); // Add this for debugging
+    
     if (autoTest === 'true') {
-      console.log('Auto test mode detected');
-      // Automatically fill in the code
+      console.log('Auto test mode detected - filling code');
       setCode('111111');
       
       // Submit after a short delay
       const timer = setTimeout(() => {
+        console.log('Auto-submitting form');
         navigate('/success');
       }, 1500);
       
