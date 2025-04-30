@@ -6,7 +6,7 @@ function SuccessPage() {
     useEffect(() => {
       // Redirect to ripa.com/success after 5 seconds
       const timer = setTimeout(() => {
-        window.location.href = 'https://ripple.thedacare.org/#/register-ial2-intermediate-state';
+        window.location.href = 'https://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback?result=success';
       }, 5000);
       
       return () => clearTimeout(timer);
