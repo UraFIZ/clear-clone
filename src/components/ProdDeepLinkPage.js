@@ -28,10 +28,10 @@ function ProdDeepLinkPage() {
             Verify Prod deep-linking
           </button>
           <button
-            onClick={handleProdVerifyClick}
+            onClick={handleStagingVerifyClick}
             className="verify-button staging alt"
           >
-            Verify Prod deep-linking
+            Verify Staging deep-linking
           </button>
           <button
             onClick={handleAltruaStagingVerifyClick}
