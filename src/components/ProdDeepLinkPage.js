@@ -12,6 +12,9 @@ function ProdDeepLinkPage() {
     window.location.href = "https://ripple.staging.icanbwell.com";
   };
 
+  const handleAltruaStagingVerifyClick = () => {
+    window.location.href = "https://altrua.staging.icanbwell.com";
+  };
   return (
     <div className="prod-deeplink-container">
       <Logo />
@@ -25,10 +28,16 @@ function ProdDeepLinkPage() {
             Verify Prod deep-linking
           </button>
           <button
-            onClick={handleStagingVerifyClick}
+            onClick={handleProdVerifyClick}
+            className="verify-button staging alt"
+          >
+            Verify Prod deep-linking
+          </button>
+          <button
+            onClick={handleAltruaStagingVerifyClick}
             className="verify-button staging-button"
           >
-            Verify Staging deep-linking
+            Verify Staging alt deep-linking
           </button>
         </div>
       </div>
