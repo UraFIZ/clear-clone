@@ -15,6 +15,13 @@ function ProdDeepLinkPage() {
   const handleAltruaStagingVerifyClick = () => {
     window.location.href = "https://altrua.staging.icanbwell.com";
   };
+  const handleBwellStagingVerifyClick = () => {
+    window.location.href = "https://portal.staging.icanbwell.com";
+  };
+  const handleMedstarStagingVerifyClick = () => {
+    window.location.href = "https://medstar.staging.icanbwell.com";
+  };
+
   return (
     <div className="prod-deeplink-container">
       <Logo />
@@ -37,7 +44,19 @@ function ProdDeepLinkPage() {
             onClick={handleAltruaStagingVerifyClick}
             className="verify-button staging-button"
           >
-            Verify Staging alt deep-linking
+            Verify Staging Altrua staging deep-linking
+          </button>
+          <button
+            onClick={handleBwellStagingVerifyClick}
+            className="verify-button staging-button"
+          >
+            Verify bwell staging deep-linking
+          </button>
+          <button
+            onClick={handleMedstarStagingVerifyClick}
+            className="verify-button staging-button"
+          >
+            Verify medstar staging deep-linking
           </button>
         </div>
       </div>
