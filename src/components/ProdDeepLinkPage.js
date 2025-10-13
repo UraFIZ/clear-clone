@@ -29,8 +29,8 @@ function ProdDeepLinkPage() {
   };
 
   const handleContinueClick = () => {
-    const deepLink = generateDeepLink();
-    window.location.href = deepLink;
+    // const deepLink = generateDeepLink();
+    window.location.href = `intent://ripple.staging.icanbwell.com`;
   };
   const handleContinueClickOld = () => {
     window.location.href = "https://ripple.staging.icanbwell.com/";
