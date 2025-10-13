@@ -1,5 +1,3 @@
-// ProdDeepLinkPage.js
-import React from "react";
 import Logo from "./Logo";
 import "./ProdDeepLinkPage.css";
 

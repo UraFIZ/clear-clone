@@ -35,24 +35,30 @@
 }
 
 .continue-button {
-  background-color: #0073e6;
+  background-color: #1a3a5c;
   color: white;
   border: none;
-  padding: 0.875rem 3rem;
-  border-radius: 8px;
+  padding: 1rem 3rem;
+  border-radius: 50px;
   font-size: 1.1rem;
   font-weight: 500;
   cursor: pointer;
   transition: background-color 0.2s ease;
-  min-width: 200px;
+  width: 100%;
+  max-width: 500px;
+  margin-bottom: 1rem;
 }
 
 .continue-button:hover {
-  background-color: #005bb5;
+  background-color: #0f2842;
 }
 
 .continue-button:active {
   transform: translateY(1px);
+}
+
+.continue-button:last-of-type {
+  margin-bottom: 0;
 }
 
 .language-selector {
