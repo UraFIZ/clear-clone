@@ -32,6 +32,9 @@ function ProdDeepLinkPage() {
     const deepLink = generateDeepLink();
     window.location.href = deepLink;
   };
+  const handleContinueClickOld = () => {
+    window.location.href = "https://ripple.staging.icanbwell.com/";
+  };
 
   return (
     <div className="prod-deeplink-container">
@@ -43,6 +46,9 @@ function ProdDeepLinkPage() {
         </p>
         <button onClick={handleContinueClick} className="continue-button">
           Continue
+        </button>
+        <button onClick={handleContinueClickOld} className="continue-button">
+          Continue with old approach
         </button>
       </div>
 
