@@ -4,61 +4,46 @@ import Logo from "./Logo";
 import "./ProdDeepLinkPage.css";
 
 function ProdDeepLinkPage() {
-  const handleProdVerifyClick = () => {
-    window.location.href = "https://ripple.thedacare.org/";
+  // Detect if user is on Samsung Internet browser
+  const isSamsungBrowser = () => {
+    return /SamsungBrowser/i.test(navigator.userAgent);
   };
 
-  const handleStagingVerifyClick = () => {
-    window.location.href = "https://ripple.staging.icanbwell.com";
+  // Generate appropriate deep link based on browser
+  const generateDeepLink = () => {
+    const httpsUrl = "https://ripple.staging.icanbwell.com";
+    const packageName = "com.thedacare.v2.staging"; // Replace with your actual package name
+    const playStoreUrl = `https://play.google.com/store/apps/details?id=${packageName}`;
+
+    if (isSamsungBrowser()) {
+      console.log("Samsung Internet browser detected");
+      // Use intent:// URL for Samsung Internet
+      const intentPath = "ripple.staging.icanbwell.com";
+      return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
+        playStoreUrl
+      )};end`;
+    }
+
+    // Standard HTTPS URL for other browsers (App Links)
+    return httpsUrl;
   };
 
-  const handleAltruaStagingVerifyClick = () => {
-    window.location.href = "https://altrua.staging.icanbwell.com";
-  };
-  const handleBwellStagingVerifyClick = () => {
-    window.location.href = "https://portal.staging.icanbwell.com";
-  };
-  const handleMedstarStagingVerifyClick = () => {
-    window.location.href = "https://medstar.staging.icanbwell.com";
+  const handleContinueClick = () => {
+    const deepLink = generateDeepLink();
+    window.location.href = deepLink;
   };
 
   return (
     <div className="prod-deeplink-container">
       <Logo />
       <div className="prod-deeplink-content">
-        <h1>Verify Deep-linking</h1>
-        <div className="button-group">
-          <button
-            onClick={handleProdVerifyClick}
-            className="verify-button prod-button"
-          >
-            Verify Prod deep-linking
-          </button>
-          <button
-            onClick={handleStagingVerifyClick}
-            className="verify-button staging alt"
-          >
-            Verify Staging deep-linking
-          </button>
-          <button
-            onClick={handleAltruaStagingVerifyClick}
-            className="verify-button staging-button"
-          >
-            Verify Staging Altrua staging deep-linking
-          </button>
-          <button
-            onClick={handleBwellStagingVerifyClick}
-            className="verify-button staging-button"
-          >
-            Verify bwell staging deep-linking
-          </button>
-          <button
-            onClick={handleMedstarStagingVerifyClick}
-            className="verify-button staging-button"
-          >
-            Verify medstar staging deep-linking
-          </button>
-        </div>
+        <h1>Verification successful</h1>
+        <p className="success-message">
+          We've successfully verified your identity.
+        </p>
+        <button onClick={handleContinueClick} className="continue-button">
+          Continue
+        </button>
       </div>
 
       <div className="language-selector">
