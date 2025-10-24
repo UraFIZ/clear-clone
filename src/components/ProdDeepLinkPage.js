@@ -9,24 +9,27 @@ function ProdDeepLinkPage() {
 
   // Generate appropriate deep link based on browser
   const generateDeepLink = () => {
-    const httpsUrl =
-      "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
+    // const httpsUrl =
+    //   "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
     const packageName = "com.thedacare.v2.staging"; // Replace with your actual package name
     const browserFallbackUrl =
       "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
 
-    if (isAndroidBrowser()) {
-      alert("Android browser detected, using intent URL");
-      // Use intent:// URL for Android browsers to maximize deep-link compatibility
-      const intentPath =
-        "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
-      return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
-        browserFallbackUrl
-      )};end`;
-    }
-
+    // if (isAndroidBrowser()) {
+    //   alert("Android browser detected, using intent URL");
+    //   // Use intent:// URL for Android browsers to maximize deep-link compatibility
+    //   const intentPath =
+    //     "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
+    //   return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
+    //     browserFallbackUrl
+    //   )};end`;
+    // }
+    const intentPath =
+      "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
     // Standard HTTPS URL for other browsers (App Links)
-    return httpsUrl;
+    return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
+      browserFallbackUrl
+    )};end`;
   };
 
   const handleContinueClick = () => {
@@ -46,7 +49,7 @@ function ProdDeepLinkPage() {
           We've successfully verified your identity.
         </p>
         <button onClick={handleContinueClick} className="continue-button">
-          Continue to the app
+          Continue
         </button>
         <button onClick={handleContinueClickOld} className="continue-button">
           Continue with old approach
