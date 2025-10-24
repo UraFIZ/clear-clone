@@ -16,6 +16,7 @@ function ProdDeepLinkPage() {
       "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
 
     if (isAndroidBrowser()) {
+      alert("Android browser detected, using intent URL");
       // Use intent:// URL for Android browsers to maximize deep-link compatibility
       const intentPath =
         "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
@@ -45,7 +46,7 @@ function ProdDeepLinkPage() {
           We've successfully verified your identity.
         </p>
         <button onClick={handleContinueClick} className="continue-button">
-          Continue
+          Continue to the app
         </button>
         <button onClick={handleContinueClickOld} className="continue-button">
           Continue with old approach
