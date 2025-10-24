@@ -3,9 +3,9 @@ import "./ProdDeepLinkPage.css";
 
 function ProdDeepLinkPage() {
   // Detect if user is on an Android browser environment
-  const isAndroidBrowser = () => {
-    return /Android/i.test(navigator.userAgent);
-  };
+  // const isAndroidBrowser = () => {
+  //   return /Android/i.test(navigator.userAgent);
+  // };
 
   // Generate appropriate deep link based on browser
   const generateDeepLink = () => {
