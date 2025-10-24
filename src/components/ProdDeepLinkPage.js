@@ -25,7 +25,7 @@ function ProdDeepLinkPage() {
     //   )};end`;
     // }
     const intentPath =
-      "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
+      "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
     // Standard HTTPS URL for other browsers (App Links)
     return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
       browserFallbackUrl
