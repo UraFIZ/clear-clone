@@ -39,6 +39,10 @@ function ProdDeepLinkPage() {
   const handleContinueClickOld = () => {
     window.location.href = "https://ripple.staging.icanbwell.com/";
   };
+  const handleContinueClickDemo = () => {
+    window.location.href =
+      "intent://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback#Intent;scheme=https;package=com.icanbwell.bwelldemo.staging;S.browser_fallback_url=https%3A%2F%2Fapp.staging.icanbwell.com%2Fbwell_demo;end?status=success";
+  };
 
   return (
     <div className="prod-deeplink-container">
@@ -48,6 +52,9 @@ function ProdDeepLinkPage() {
         <p className="success-message">
           We've successfully verified your identity.
         </p>
+        <button onClick={handleContinueClickDemo} className="continue-button">
+          Continue to the demo staging app
+        </button>
         <button onClick={handleContinueClick} className="continue-button">
           Continue to the app
         </button>
