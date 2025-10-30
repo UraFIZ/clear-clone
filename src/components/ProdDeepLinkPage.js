@@ -43,6 +43,9 @@ function ProdDeepLinkPage() {
     window.location.href =
       "intent://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback#Intent;scheme=https;package=com.icanbwell.bwelldemo.staging;S.browser_fallback_url=https%3A%2F%2Fapp.staging.icanbwell.com%2Fbwell_demo;end?status=success";
   };
+  const handleContinueClickDemoOld = () => {
+    window.location.href = "https://app.staging.icanbwell.com/bwell_demo/";
+  };
 
   return (
     <div className="prod-deeplink-container">
@@ -54,6 +57,12 @@ function ProdDeepLinkPage() {
         </p>
         <button onClick={handleContinueClickDemo} className="continue-button">
           Continue to the demo staging app
+        </button>
+        <button
+          onClick={handleContinueClickDemoOld}
+          className="continue-button"
+        >
+          Continue to the demo staging app old approach
         </button>
         <button onClick={handleContinueClick} className="continue-button">
           Continue to the app
