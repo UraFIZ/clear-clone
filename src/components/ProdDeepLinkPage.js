@@ -48,7 +48,7 @@ function ProdDeepLinkPage() {
   };
   const stagingRippleClick = () => {
     window.location.href =
-      "intent://ripple.staging.icanbwell.com/#/register-ial2-callback/#Intent;scheme=https;package=com.thedacare.v2.staging;S.browser_fallback_url=https%3A%2F%2Fripple.staging.icanbwell.com;end/?status=success";
+      "intent://ripple.staging.icanbwell.com/#/register-ial2-callback?status=success#Intent;scheme=https;package=com.thedacare.v2.staging;S.browser_fallback_url=https%3A%2F%2Fripple.staging.icanbwell.com;end";
   };
 
   return (
