@@ -46,6 +46,10 @@ function ProdDeepLinkPage() {
   const handleContinueClickDemoOld = () => {
     window.location.href = "https://app.staging.icanbwell.com/bwell_demo/";
   };
+  const stagingRippleClick = () => {
+    window.location.href =
+      "intent://ripple.staging.icanbwell.com/#/register-ial2-callback/#Intent;scheme=https;package=com.thedacare.v2.staging;S.browser_fallback_url=https%3A%2F%2Fripple.staging.icanbwell.com;end/?status=success";
+  };
 
   return (
     <div className="prod-deeplink-container">
@@ -69,6 +73,9 @@ function ProdDeepLinkPage() {
         </button>
         <button onClick={handleContinueClickOld} className="continue-button">
           Continue with old approach
+        </button>
+        <button onClick={stagingRippleClick} className="continue-button">
+          Continue with staging ripple
         </button>
       </div>
 
