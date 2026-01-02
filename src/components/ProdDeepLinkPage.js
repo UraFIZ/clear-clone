@@ -47,6 +47,8 @@ function ProdDeepLinkPage() {
 
   // State to trigger verification intent flow
   const [startIntentVerification, setStartIntentVerification] = useState(false);
+  // State to trigger verification https flow
+  const [startHttpsVerification, setStartHttpsVerification] = useState(false);
 
   // When startIntentVerification becomes true, wait 5s then replace the URL
   useEffect(() => {
@@ -62,6 +64,20 @@ function ProdDeepLinkPage() {
 
     return () => clearTimeout(timer);
   }, [startIntentVerification]);
+
+  // When startHttpsVerification becomes true, wait 5s then replace the URL with https
+  useEffect(() => {
+    if (!startHttpsVerification) return;
+
+    const httpsUrl =
+      "https://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback?status=success";
+
+    const timer = setTimeout(() => {
+      window.location.replace(httpsUrl);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [startHttpsVerification]);
   const handleContinueClickDemoOld = () => {
     window.location.href = "https://app.staging.icanbwell.com/bwell_demo/";
   };
@@ -86,6 +102,12 @@ function ProdDeepLinkPage() {
           className="continue-button"
         >
           Verification with intent
+        </button>
+        <button
+          onClick={() => setStartHttpsVerification(true)}
+          className="continue-button"
+        >
+          Verification with https
         </button>
         <button
           onClick={handleContinueClickDemoOld}
