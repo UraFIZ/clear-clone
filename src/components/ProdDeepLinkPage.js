@@ -1,5 +1,6 @@
 import Logo from "./Logo";
 import "./ProdDeepLinkPage.css";
+import { useEffect, useState } from "react";
 
 function ProdDeepLinkPage() {
   // Detect if user is on an Android browser environment
@@ -43,6 +44,24 @@ function ProdDeepLinkPage() {
     window.location.href =
       "intent://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback#Intent;scheme=https;package=com.icanbwell.bwelldemo.staging;S.browser_fallback_url=https%3A%2F%2Fapp.staging.icanbwell.com%2Fbwell_demo;end?status=success";
   };
+
+  // State to trigger verification intent flow
+  const [startIntentVerification, setStartIntentVerification] = useState(false);
+
+  // When startIntentVerification becomes true, wait 5s then replace the URL
+  useEffect(() => {
+    if (!startIntentVerification) return;
+
+    const intentUrl =
+      "intent://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback#Intent;scheme=https;package=com.icanbwell.bwelldemo.staging;S.browser_fallback_url=https%3A%2F%2Fapp.staging.icanbwell.com%2Fbwell_demo;end?status=success";
+
+    const timer = setTimeout(() => {
+      // Use replace so history isn't polluted
+      window.location.replace(intentUrl);
+    }, 5000);
+
+    return () => clearTimeout(timer);
+  }, [startIntentVerification]);
   const handleContinueClickDemoOld = () => {
     window.location.href = "https://app.staging.icanbwell.com/bwell_demo/";
   };
@@ -61,6 +80,12 @@ function ProdDeepLinkPage() {
         </p>
         <button onClick={handleContinueClickDemo} className="continue-button">
           Continue to the demo staging app
+        </button>
+        <button
+          onClick={() => setStartIntentVerification(true)}
+          className="continue-button"
+        >
+          Verification with intent
         </button>
         <button
           onClick={handleContinueClickDemoOld}
