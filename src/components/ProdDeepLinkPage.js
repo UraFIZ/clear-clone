@@ -3,88 +3,92 @@ import "./ProdDeepLinkPage.css";
 import { useEffect, useState } from "react";
 
 function ProdDeepLinkPage() {
-  // Detect if user is on an Android browser environment
-  // const isAndroidBrowser = () => {
-  //   return /Android/i.test(navigator.userAgent);
-  // };
+  // ---------------------------------------------------------------------------
+  // CONFIGURATION
+  // ---------------------------------------------------------------------------
 
-  // Generate appropriate deep link based on browser
-  const generateDeepLink = () => {
-    // const httpsUrl =
-    //   "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
-    const packageName = "com.thedacare.v2.staging"; // Replace with your actual package name
-    const browserFallbackUrl =
-      "https://ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
-
-    // if (isAndroidBrowser()) {
-    //   alert("Android browser detected, using intent URL");
-    //   // Use intent:// URL for Android browsers to maximize deep-link compatibility
-    //   const intentPath =
-    //     "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
-    //   return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
-    //     browserFallbackUrl
-    //   )};end`;
-    // }
-    const intentPath =
-      "ripple.staging.icanbwell.com/#/register-ial2-callback/?status=success";
-    // Standard HTTPS URL for other browsers (App Links)
-    return `intent://${intentPath}#Intent;scheme=https;package=${packageName};S.browser_fallback_url=${encodeURIComponent(
-      browserFallbackUrl
-    )};end`;
+  // 1. SCENARIO: BWell Demo App
+  // Package: com.icanbwell.bwelldemo.staging
+  // Valid Domain: app.staging.icanbwell.com
+  const BWELL_DEMO_CONFIG = {
+    name: "BWell Demo App",
+    pkg: "com.icanbwell.bwelldemo.staging",
+    domain: "app.staging.icanbwell.com",
+    path: "bwell_demo/#/create-account/ial2-callback",
+    fallbackPath: "bwell_demo",
   };
 
-  const handleContinueClick = () => {
-    const deepLink = generateDeepLink();
-    window.location.href = deepLink;
-  };
-  const handleContinueClickOld = () => {
-    window.location.href = "https://ripple.staging.icanbwell.com/";
-  };
-  const handleContinueClickDemo = () => {
-    window.location.href =
-      "intent://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback#Intent;scheme=https;package=com.icanbwell.bwelldemo.staging;S.browser_fallback_url=https%3A%2F%2Fapp.staging.icanbwell.com%2Fbwell_demo;end?status=success";
+  // 2. SCENARIO: ThedaCare App
+  // Package: com.thedacare.v2.staging
+  // Valid Domain: ripple.staging.icanbwell.com
+  const THEDACARE_CONFIG = {
+    name: "ThedaCare App",
+    pkg: "com.thedacare.v2.staging",
+    domain: "ripple.staging.icanbwell.com",
+    path: "#/register-ial2-callback/",
+    fallbackPath: "", // Root
   };
 
-  // State to trigger verification intent flow
-  const [startIntentVerification, setStartIntentVerification] = useState(false);
-  // State to trigger verification https flow
-  const [startHttpsVerification, setStartHttpsVerification] = useState(false);
+  // ---------------------------------------------------------------------------
+  // HELPER FUNCTIONS
+  // ---------------------------------------------------------------------------
 
-  // When startIntentVerification becomes true, wait 5s then replace the URL
+  const generateHttpsUrl = (config) => {
+    // Mimics: https://ripple.staging.icanbwell.com/#/.../?status=success
+    return `https://${config.domain}/${config.path}?status=success`;
+  };
+
+  const generateIntentUrl = (config) => {
+    // 1. The core scheme path (without https://)
+    const intentPath = `${config.domain}/${config.path}`;
+    // 2. The Browser Fallback (where to go if app not installed)
+    const fallbackUrl = `https://${config.domain}/${config.fallbackPath}`;
+    // 3. Assemble
+    return `intent://${intentPath}?status=success#Intent;scheme=https;package=${
+      config.pkg
+    };S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`;
+  };
+
+  // ---------------------------------------------------------------------------
+  // HANDLERS (Direct Click -> window.location.href)
+  // ---------------------------------------------------------------------------
+
+  const handleUsingHref = (config, type) => {
+    const url =
+      type === "https" ? generateHttpsUrl(config) : generateIntentUrl(config);
+    console.log(`[HREF] Redirecting to: ${url}`);
+    window.location.href = url;
+  };
+
+  // ---------------------------------------------------------------------------
+  // AUTOMATED FLOWS (Delayed -> window.location.replace)
+  // ---------------------------------------------------------------------------
+
+  // State to track which auto-test is running
+  const [autoTestConfig, setAutoTestConfig] = useState(null); // { config: ..., type: 'https'|'intent' }
+
   useEffect(() => {
-    if (!startIntentVerification) return;
+    if (!autoTestConfig) return;
 
-    const intentUrl =
-      "intent://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback#Intent;scheme=https;package=com.icanbwell.bwelldemo.staging;S.browser_fallback_url=https%3A%2F%2Fapp.staging.icanbwell.com%2Fbwell_demo;end?status=success";
+    const { config, type } = autoTestConfig;
+    const url =
+      type === "https" ? generateHttpsUrl(config) : generateIntentUrl(config);
+
+    console.log(`[AUTO] Timer started for ${type} on ${config.name}`);
 
     const timer = setTimeout(() => {
-      // Use replace so history isn't polluted
-      window.location.replace(intentUrl);
+      console.log(`[REPLACE] Redirecting to: ${url}`);
+      try {
+        window.location.replace(url);
+      } catch (e) {
+        console.error("Redirect failed", e);
+        // Fallback if replace fails
+        window.location.href = url;
+      }
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [startIntentVerification]);
-
-  // When startHttpsVerification becomes true, wait 5s then replace the URL with https
-  useEffect(() => {
-    if (!startHttpsVerification) return;
-
-    const httpsUrl =
-      "https://app.staging.icanbwell.com/bwell_demo/#/create-account/ial2-callback?status=success";
-
-    const timer = setTimeout(() => {
-      window.location.replace(httpsUrl);
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, [startHttpsVerification]);
-  const handleContinueClickDemoOld = () => {
-    window.location.href = "https://app.staging.icanbwell.com/bwell_demo/";
-  };
-  const stagingRippleClick = () => {
-    window.location.href =
-      "intent://ripple.staging.icanbwell.com/#/register-ial2-callback?status=success#Intent;scheme=https;package=com.thedacare.v2.staging;S.browser_fallback_url=https%3A%2F%2Fripple.staging.icanbwell.com;end";
-  };
+  }, [autoTestConfig]);
 
   return (
     <div className="prod-deeplink-container">
@@ -94,36 +98,118 @@ function ProdDeepLinkPage() {
         <p className="success-message">
           We've successfully verified your identity.
         </p>
-        <button onClick={handleContinueClickDemo} className="continue-button">
-          Continue to the demo staging app
-        </button>
-        <button
-          onClick={() => setStartIntentVerification(true)}
-          className="continue-button"
+
+        {/* THEDACARE SECTION (RIPPLE) */}
+        <div
+          style={{
+            margin: "20px 0",
+            border: "2px solid #007bff",
+            padding: "15px",
+            borderRadius: "8px",
+            backgroundColor: "#f0f8ff",
+          }}
         >
-          Verification with intent
-        </button>
-        <button
-          onClick={() => setStartHttpsVerification(true)}
-          className="continue-button"
+          <h3 style={{ marginTop: 0 }}>ThedaCare App (Ripple)</h3>
+          <p style={{ fontSize: "12px", color: "#666" }}>
+            Domain: {THEDACARE_CONFIG.domain}
+            <br />
+            Package: {THEDACARE_CONFIG.pkg}
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <strong>Method 1: Direct Click (window.location.href)</strong>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => handleUsingHref(THEDACARE_CONFIG, "https")}
+                className="continue-button"
+                style={{ flex: 1 }}
+              >
+                HTTPS (href)
+              </button>
+              <button
+                onClick={() => handleUsingHref(THEDACARE_CONFIG, "intent")}
+                className="continue-button"
+                style={{ flex: 1 }}
+              >
+                Intent (href)
+              </button>
+            </div>
+
+            <strong>Method 2: Auto delayed 5s (window.location.replace)</strong>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() =>
+                  setAutoTestConfig({ config: THEDACARE_CONFIG, type: "https" })
+                }
+                className="continue-button"
+                style={{ flex: 1 }}
+              >
+                HTTPS (replace)
+              </button>
+              <button
+                onClick={() =>
+                  setAutoTestConfig({
+                    config: THEDACARE_CONFIG,
+                    type: "intent",
+                  })
+                }
+                className="continue-button"
+                style={{ flex: 1 }}
+              >
+                Intent (replace)
+              </button>
+            </div>
+            {autoTestConfig?.config === THEDACARE_CONFIG && (
+              <div style={{ color: "#d63384", fontWeight: "bold" }}>
+                ⏳ Waiting 5s to trigger {autoTestConfig.type} replace...
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* BWELL DEMO SECTION */}
+        <div
+          style={{
+            margin: "20px 0",
+            border: "1px solid #ddd",
+            padding: "15px",
+            borderRadius: "8px",
+          }}
         >
-          Verification with https
-        </button>
-        <button
-          onClick={handleContinueClickDemoOld}
-          className="continue-button"
-        >
-          Continue to the demo staging app old approach
-        </button>
-        <button onClick={handleContinueClick} className="continue-button">
-          Continue to the app
-        </button>
-        <button onClick={handleContinueClickOld} className="continue-button">
-          Continue with old approach
-        </button>
-        <button onClick={stagingRippleClick} className="continue-button">
-          Continue with staging ripple
-        </button>
+          <h3 style={{ marginTop: 0 }}>BWell Demo App</h3>
+          <p style={{ fontSize: "12px", color: "#666" }}>
+            Domain: {BWELL_DEMO_CONFIG.domain}
+          </p>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <button
+                onClick={() => handleUsingHref(BWELL_DEMO_CONFIG, "https")}
+                className="continue-button"
+                style={{ flex: 1 }}
+              >
+                HTTPS (href)
+              </button>
+              <button
+                onClick={() =>
+                  setAutoTestConfig({
+                    config: BWELL_DEMO_CONFIG,
+                    type: "https",
+                  })
+                }
+                className="continue-button"
+                style={{ flex: 1 }}
+              >
+                HTTPS (replace)
+              </button>
+            </div>
+            {autoTestConfig?.config === BWELL_DEMO_CONFIG && (
+              <div style={{ color: "#d63384", fontWeight: "bold" }}>
+                ⏳ Waiting 5s to trigger {autoTestConfig.type} replace...
+              </div>
+            )}
+          </div>
+        </div>
       </div>
 
       <div className="language-selector">
