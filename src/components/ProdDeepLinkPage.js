@@ -38,11 +38,6 @@ function ProdDeepLinkPage() {
     const host = config.domain;
     let path = config.path;
 
-    // Encode "#" to safely pass it inside the intent path
-    if (path.includes("#")) {
-      path = path.replace("#", "%23");
-    }
-
     const intentPath = `${host}/${path}`;
     const fallbackUrl = `https://${config.domain}/${config.fallbackPath}`;
 
