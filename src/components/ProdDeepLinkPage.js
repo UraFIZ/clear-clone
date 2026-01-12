@@ -7,17 +7,6 @@ function ProdDeepLinkPage() {
   // CONFIGURATION
   // ---------------------------------------------------------------------------
 
-  // 1. SCENARIO: BWell Demo App
-  // Package: com.icanbwell.bwelldemo.staging
-  // Valid Domain: app.staging.icanbwell.com
-  const BWELL_DEMO_CONFIG = {
-    name: "BWell Demo App",
-    pkg: "com.icanbwell.bwelldemo.staging",
-    domain: "app.staging.icanbwell.com",
-    path: "bwell_demo/#/create-account/ial2-callback",
-    fallbackPath: "bwell_demo",
-  };
-
   // 2. SCENARIO: ThedaCare App
   // Package: com.thedacare.v2.staging
   // Valid Domain: ripple.staging.icanbwell.com
