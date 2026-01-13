@@ -6,8 +6,7 @@ function SuccessPage() {
   useEffect(() => {
     // Redirect to ripa.com/success after 5 seconds
     const timer = setTimeout(() => {
-      window.location.href =
-        "https://ripple.staging.icanbwell.com/#/create-account/ial2-callback?result=success";
+      window.location.href = "https://ripple.staging.icanbwell.com/";
     }, 5000);
 
     return () => clearTimeout(timer);
