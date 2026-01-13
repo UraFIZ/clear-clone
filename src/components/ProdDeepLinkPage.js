@@ -1,14 +1,11 @@
-import Logo from "./Logo";
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import "./ProdDeepLinkPage.css";
+import clearLogo from "./clear-logo.png";
 import { useEffect, useState } from "react";
 
 function ProdDeepLinkPage() {
-  // ---------------------------------------------------------------------------
-  // CONFIGURATION
-  // ---------------------------------------------------------------------------
-
-  // 1. SCENARIO: BWell Demo App
-  const BWELL_DEMO_CONFIG = {
+  // --- CONFIGURATION ---
+  const BWELL_CONFIG = {
     name: "BWell Demo App",
     pkg: "com.icanbwell.bwelldemo.staging",
     domain: "app.staging.icanbwell.com",
@@ -16,7 +13,6 @@ function ProdDeepLinkPage() {
     fallbackPath: "bwell_demo",
   };
 
-  // 2. SCENARIO: ThedaCare App
   const THEDACARE_CONFIG = {
     name: "ThedaCare App",
     pkg: "com.thedacare.v2.staging",
@@ -25,146 +21,210 @@ function ProdDeepLinkPage() {
     fallbackPath: "", // Root
   };
 
-  // ---------------------------------------------------------------------------
-  // HELPER FUNCTIONS
-  // ---------------------------------------------------------------------------
-
+  // --- HELPER: GENERATE INTENT URL ---
   const generateIntentUrl = (config) => {
-    // WINNING LOGIC:
-    // 1. Use intent:// scheme
-    // 2. Encode the "#" in the path to "%23" to prevent Chrome parsing errors
-    // 3. Place ?status=success BEFORE the #Intent fragment
-
     const host = config.domain;
     let path = config.path;
-
+    // WINNING LOGIC: Encode # to %23 for Chrome Intent parsing
+    if (path.includes("#")) {
+      path = path.replace("#", "%23");
+    }
     const intentPath = `${host}/${path}`;
     const fallbackUrl = `https://${config.domain}/${config.fallbackPath}`;
 
+    // Ensure ?status=success is BEFORE #Intent
     return `intent://${intentPath}?status=success#Intent;scheme=https;package=${
       config.pkg
     };S.browser_fallback_url=${encodeURIComponent(fallbackUrl)};end`;
   };
 
-  // ---------------------------------------------------------------------------
-  // HANDLERS
-  // ---------------------------------------------------------------------------
-
-  const handleContinueClick = (config) => {
-    const url = generateIntentUrl(config);
-    console.log(`Redirecting to: ${url}`);
-    window.location.href = url;
+  // --- HELPER: GENERATE HTTPS URL (Standard) ---
+  const generateHttpsUrl = (config) => {
+    return `https://${config.domain}/${config.path}?status=success`;
   };
 
-  const [autoRedirectConfig, setAutoRedirectConfig] = useState(null);
-  const [generatedDebugUrl, setGeneratedDebugUrl] = useState("");
+  // --- STATE ---
+  const [step, setStep] = useState(1); // 1 = Verify, 2 = Success/Redirect
+  const [selectedConfig, setSelectedConfig] = useState(null);
+  const [redirectMethod, setRedirectMethod] = useState("intent"); // "intent" or "https"
 
+  // --- HANDLER: Start Verification ---
+  const handleStartVerification = (config, method) => {
+    setSelectedConfig(config);
+    setRedirectMethod(method);
+    setStep(2);
+  };
+
+  // --- EFFECT: Handle Auto-Redirect on Step 2 ---
   useEffect(() => {
-    if (!autoRedirectConfig) return;
+    if (step !== 2 || !selectedConfig) return;
 
-    // Generate the URL
-    const url = generateIntentUrl(autoRedirectConfig);
-    setGeneratedDebugUrl(url);
-    console.log(`[AUTO] Scheduled redirect for ${autoRedirectConfig.name}`);
+    console.log(
+      `[AUTO] Preparing redirect to ${selectedConfig.name} via ${redirectMethod}...`
+    );
 
-    // Wait 5s then redirect
+    let targetUrl;
+    if (redirectMethod === "intent") {
+      targetUrl = generateIntentUrl(selectedConfig);
+    } else {
+      targetUrl = generateHttpsUrl(selectedConfig);
+    }
+
     const timer = setTimeout(() => {
-      console.log(`[EXECUTE] Setting href to: ${url}`);
-      // NOTE: Android Chrome aggressively blocks redirects without user gestures (like this timeout).
-      // If this fails and goes to fallback, it is likely due to the browser's anti-spam protection,
-      // NOT because the URL is wrong. A real server-side 302 redirect usually bypasses this.
-      window.location.href = url;
+      console.log(`[EXECUTE] Redirecting to: ${targetUrl}`);
+      window.location.href = targetUrl;
     }, 5000);
 
     return () => clearTimeout(timer);
-  }, [autoRedirectConfig]);
+  }, [step, selectedConfig, redirectMethod]);
 
+  // --- RENDER SCREEN 1: VERIFY ---
+  if (step === 1) {
+    return (
+      <div className="prod-deeplink-container">
+        <div className="clear-header">
+          <img
+            src={clearLogo}
+            alt="CLEAR"
+            className="clear-logo"
+            style={{ height: "30px" }}
+          />
+        </div>
+
+        <div className="prod-deeplink-content">
+          <h1 className="verify-title">Verify your identity with CLEAR</h1>
+
+          <p className="verify-desc">
+            Enjoy extra peace of mind with the trusted security used at airports
+            to keep your health information safe.{" "}
+            <a href="#" style={{ color: "#4169ed" }}>
+              Learn more
+            </a>
+          </p>
+
+          <div className="feature-list">
+            <div className="feature-item">
+              <div className="feature-icon">🔒</div>
+              <div className="feature-text">
+                <h4>Top-tier security</h4>
+                <p>
+                  Join thousands who rely on CLEAR to protect their information
+                  with confidence.
+                </p>
+              </div>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon">📋</div>
+              <div className="feature-text">
+                <h4>Match with confidence</h4>
+                <p>
+                  Trust that the health records we gather truly belong to you.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="action-box">
+            <button
+              onClick={() =>
+                handleStartVerification(THEDACARE_CONFIG, "intent")
+              }
+              className="clear-button"
+            >
+              Start Verification (ThedaCare - Intent)
+            </button>
+            <button
+              onClick={() => handleStartVerification(BWELL_CONFIG, "intent")}
+              className="clear-button"
+            >
+              Start Verification (BWell - Intent)
+            </button>
+
+            <button
+              onClick={() => handleStartVerification(THEDACARE_CONFIG, "https")}
+              className="clear-button secondary"
+              style={{
+                border: "1px solid #ccc",
+                color: "#666",
+                marginTop: "10px",
+              }}
+            >
+              Start Verification (ThedaCare - HTTPS)
+            </button>
+            <button
+              onClick={() => handleStartVerification(BWELL_CONFIG, "https")}
+              className="clear-button secondary"
+              style={{ border: "1px solid #ccc", color: "#666" }}
+            >
+              Start Verification (BWell - HTTPS)
+            </button>
+          </div>
+          <div style={{ marginTop: "16px", fontSize: "12px", color: "#999" }}>
+            Takes around 5 mins to complete
+          </div>
+        </div>
+
+        <div className="footer-lang">
+          <span>English (US) ▼</span>
+          <span>CLEAR Privacy Policy</span>
+        </div>
+      </div>
+    );
+  }
+
+  // --- RENDER SCREEN 2: SUCCESS/REDIRECT ---
   return (
     <div className="prod-deeplink-container">
-      <Logo />
-      <div className="prod-deeplink-content">
-        <h1>Verification successful</h1>
-        <p className="success-message">
-          We successfully verified your identity.
-        </p>
-
-        {generatedDebugUrl && (
-          <div
-            style={{
-              wordBreak: "break-all",
-              fontSize: "10px",
-              margin: "10px 0",
-              padding: "10px",
-              background: "#eee",
-              borderRadius: "4px",
-            }}
+      <div className="clear-header">
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <img
+            src={clearLogo}
+            alt="CLEAR"
+            className="clear-logo"
+            style={{ height: "24px" }}
+          />
+          <span style={{ color: "#ccc" }}>|</span>
+          <span
+            style={{ fontWeight: "bold", fontSize: "20px", color: "#303ab2" }}
           >
-            <strong>Last Generated Intent:</strong>
-            <br />
-            {generatedDebugUrl}
-          </div>
-        )}
-
-        {/* THEDACARE SECTION */}
-        <div
-          className="config-box"
-          style={{
-            marginBottom: "20px",
-            border: "1px solid #ccc",
-            padding: "15px",
-            borderRadius: "8px",
-          }}
-        >
-          <h3>ThedaCare (Ripple)</h3>
-          <button
-            onClick={() => handleContinueClick(THEDACARE_CONFIG)}
-            className="continue-button"
-          >
-            Continue to App (Manual)
-          </button>
-          <button
-            onClick={() => setAutoRedirectConfig(THEDACARE_CONFIG)}
-            className="continue-button"
-            style={{ background: "#666" }}
-          >
-            Simulate Auto-Redirect (5s)
-          </button>
+            b.well
+          </span>
         </div>
-
-        {/* BWELL DEMO SECTION */}
-        <div
-          className="config-box"
-          style={{
-            marginBottom: "20px",
-            border: "1px solid #ccc",
-            padding: "15px",
-            borderRadius: "8px",
-          }}
-        >
-          <h3>BWell Demo App</h3>
-          <button
-            onClick={() => handleContinueClick(BWELL_DEMO_CONFIG)}
-            className="continue-button"
-          >
-            Continue to App (Manual)
-          </button>
-          <button
-            onClick={() => setAutoRedirectConfig(BWELL_DEMO_CONFIG)}
-            className="continue-button"
-            style={{ background: "#666" }}
-          >
-            Simulate Auto-Redirect (5s)
-          </button>
-        </div>
-
-        {autoRedirectConfig && (
-          <div style={{ color: "green", fontWeight: "bold" }}>
-            🔄 Auto-redirecting to {autoRedirectConfig.name} in 5 seconds...
-          </div>
-        )}
       </div>
-      <div className="language-selector">
-        <span>🌐 English (US) ▼</span>
+
+      <div className="prod-deeplink-content">
+        <div className="spinner-container">
+          <div className="simple-spinner"></div>
+        </div>
+
+        <h2 className="success-title">Thank you for using CLEAR</h2>
+        <p className="success-sub">We're returning you to b.well</p>
+
+        <div
+          style={{
+            marginTop: "50px",
+            padding: "10px",
+            background: "#f9f9f9",
+            borderRadius: "8px",
+            fontSize: "12px",
+            maxWidth: "300px",
+            color: "#666",
+            textAlign: "left",
+          }}
+        >
+          <strong>Debug Info:</strong>
+          <br />
+          Redirecting to: {selectedConfig?.name}
+          <br />
+          Method: {redirectMethod}
+          <br />
+          Auto-redirect in 5s...
+        </div>
+      </div>
+
+      <div className="footer-lang">
+        <span>English (PL) ▼</span>
+        <span>CLEAR Privacy Policy</span>
       </div>
     </div>
   );
